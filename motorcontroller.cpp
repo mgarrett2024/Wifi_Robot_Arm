@@ -75,7 +75,63 @@ void MotorController::setup_stepper(std::list<int> stepper_params)
 */
 void MotorController::move_motors_smooth(std::list<int> angles)
 {
+    int largestAngleDelta = 0;
 
+    // Set motor angles
+    // Stepper motor
+    int stepperAngle = angles.front();
+    angles.pop_front();
+    stepper.set_angle(stepperAngle);
+    largestAngleDelta = max(largestAngleDelta, stepperAngle);
+
+    // Servo motors
+    for (int i = 0; i < this->servos.size(); i++) 
+    {
+        int servoAngle = angles.front();
+        angles.pop_front();
+        this->servos[i].Motor::set_angle(servoAngle);
+        largestAngleDelta = max(largestAngleDelta, servoAngle);
+
+    }
+
+    // Calculate largest angle
+    float duration = largestAngleDelta / this->speed;
+    float steps = duration / this->frametime;
+    Serial.println("Duration: " + String(duration));
+    Serial.println("Steps: " + String(steps));
+    Serial.println("Speed: " + String(this->speed));
+    Serial.println("Frame time: " + String(this->frametime));
+
+
+    if (steps == 0.0f) { 
+        steps = 1.0f; 
+    }
+
+    float progress = 0.0f;
+    float startTime = millis();
+
+    while (progress < 1.0f) {
+        float currentTime = millis();
+
+        progress += 1.0f / steps;
+        progress = min(1.0f, progress);
+
+        Serial.println("Progress: " + String(progress));
+
+        // Move Stepper
+        stepper.move(progress);
+
+        // Move servos
+        for (int i = 0; i < this->servos.size(); i++) 
+        {
+            this->servos[i].move(progress);
+        }
+
+        // Wait for step to be completed
+        float waitDelay = max(0.0f, (this->frametime * 1000) - (millis() - currentTime));
+        Serial.println("Delay: " + String(waitDelay));
+        delay(waitDelay);
+    }
 }
 
 /*
