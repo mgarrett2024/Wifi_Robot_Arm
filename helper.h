@@ -11,4 +11,6 @@ float normalize(float _value, float _minimum, float _maximum);
 
 float clamp(float _value, float _minimum, float _maximum);
 
+float map_to_180(float _value, float _minimum, float _maximum);
+
 #endif

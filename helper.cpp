@@ -17,3 +17,7 @@ float normalize(float _value, float _minimum, float _maximum) {
 float clamp(float _value, float _minimum, float _maximum) {
   return max(_minimum, min(_maximum, _value));
 }
+
+float map_to_normal(float _value, float _minimum, float _maximum, float _normal) {
+  return ((_value - _minimum) / (_maximum - _minimum)) * _normal;
+}
