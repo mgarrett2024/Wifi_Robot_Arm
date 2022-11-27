@@ -41,6 +41,8 @@ void Stepper::move(float progress)
     int stepsToTake = int(round(stepProgress - this->stepsTaken));
     this->stepsTaken = stepProgress;
 
+    Serial.println("Stepper moving to: " + String(this->angle));
+
     if (stepsToTake < 0)
     {
         digitalWrite(DIR, HIGH);
