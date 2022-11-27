@@ -22,11 +22,15 @@ void ServoMotor::move(float progress)
     Motor::move(progress);
 
     // Clamp between min and max angle of servo
-    this->angle = clamp(this->angle, 0, this->maxAngle);
+    this->angle = clamp(this->angle, 0, 180);
 
-    // Write to servo
-    this->motor.detach();
-    this->motor.setPeriodHertz(this->hertz);
-    this->motor.attach(this->pin, this->min, this->max);
-    this->motor.write(this->angle);
+    Serial.println("Servo " + String(this->pin) + " moving to: " + String(this->angle));
+
+    // This check prevents servos that aren't moving from shaking as much
+    if (!abs(this->angle - this->targetAngle) < 0.001f) {
+        this->motor.detach();
+        this->motor.setPeriodHertz(this->hertz);
+        this->motor.attach(this->pin, this->min, this->max);
+        this->motor.write(this->angle);
+    }
 }
