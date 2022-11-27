@@ -55,6 +55,7 @@ int shoulderServoAngle = 0;
 int elbowServoAngle = 0;
 int wristPitchServoAngle = 0;
 int wristRollServoAngle = 0;
+int clawServoAngle = 0;
 
 // Angle list
 std::list<int> angles;
@@ -63,7 +64,10 @@ std::list<int> angles;
 std::list<int> baseStepper = {0, 12, 14, 200}; 
 
 // angle, max angle, control pin, min, max, hertz
-std::list<int> shoulderServo = {0, 270, 18, 500, 2500, 50}; 
+std::list<int> shoulderServo = {0, 270, 18, 500, 2500, 50};
+std::list<int> elbowServo = {0, 270, 5, 500, 2500, 100};
+std::list<int> wristPitchServo = {0, 180, 21, 500, 2500, 150}; 
+std::list<int> clawServo = {0, 50, 19, 500, 2500, 200}; 
 
 void setup()
 {
@@ -95,8 +99,8 @@ void setup()
     /*
         Set up controller
     */
-
-    motorcontroller.setup_servos({shoulderServo});
+    motorcontroller = MotorController(90, 0.03f);
+    motorcontroller.setup_servos({shoulderServo, elbowServo, wristPitchServo, clawServo});
     motorcontroller.setup_stepper(baseStepper);
 }
 
@@ -186,20 +190,44 @@ void listen_for_clients() {
                         client.println("        <h2 style=\"color:#dddddd;\">Shoulder Servo Position: <span id=\"shoulderServoPos\">0</span>°</h2>");
                         client.println("        <input type=\"range\" min=\"0\" max=\"270\" class=\"slider\" id=\"shoulderServoSlider\" value=\"0\">");
                         client.println("    </div>");
-                        client.println("    <button id=\"moveButton\" onclick=\"move(baseStepperSlider.value, shoulderServoSlider.value)\">");
+                        client.println("    <div id=\"elbowServo\">");
+                        client.println("        <h2 style=\"color:#dddddd;\">Elbow Servo Position: <span id=\"elbowServoPos\">0</span>°</h2>");
+                        client.println("        <input type=\"range\" min=\"0\" max=\"270\" class=\"slider\" id=\"elbowServoSlider\" value=\"0\">");
+                        client.println("    </div>");
+                        client.println("    <div id=\"wristPitchServo\">");
+                        client.println("        <h2 style=\"color:#dddddd;\">Wrist Pitch Servo Position: <span id=\"wristPitchServoPos\">0</span>°</h2>");
+                        client.println("        <input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"wristPitchServoSlider\" value=\"0\">");
+                        client.println("    </div>");
+                        client.println("    <div id=\"clawServo\">");
+                        client.println("        <h2 style=\"color:#dddddd;\">Claw Servo Position: <span id=\"clawServoPos\">0</span>°</h2>");
+                        client.println("        <input type=\"range\" min=\"0\" max=\"50\" class=\"slider\" id=\"clawServoSlider\" value=\"0\">");
+                        client.println("    </div>");
+                        client.println("    <button id=\"moveButton\" onclick=\"move(baseStepperSlider.value, shoulderServoSlider.value, elbowServoSlider.value, wristPitchServoSlider.value, clawServoSlider.value)\">");
                         client.println("        Move to Position");
                         client.println("    </button>");
                         client.println("    <script>");
                         client.println("        var baseStepperSlider = document.getElementById(\"baseStepperSlider\");");
                         client.println("        var shoulderServoSlider = document.getElementById(\"shoulderServoSlider\");");
+                        client.println("        var elbowServoSlider = document.getElementById(\"elbowServoSlider\");");
+                        client.println("        var wristPitchServoSlider = document.getElementById(\"wristPitchServoSlider\");");
+                        client.println("        var clawServoSlider = document.getElementById(\"clawServoSlider\");");
+
                         client.println("        var baseStepperPos = document.getElementById(\"baseStepperPos\"); baseStepperPos.innerHTML = baseStepperSlider.value;");
                         client.println("        var shoulderServoPos = document.getElementById(\"shoulderServoPos\"); shoulderServoPos.innerHTML = shoulderServoSlider.value;");
+                        client.println("        var elbowServoPos = document.getElementById(\"elbowServoPos\"); elbowServoPos.innerHTML = elbowServoSlider.value;");
+                        client.println("        var wristPitchServoPos = document.getElementById(\"wristPitchServoPos\"); wristPitchServoPos.innerHTML = wristPitchServoSlider.value;");
+                        client.println("        var clawServoPos = document.getElementById(\"clawServoPos\"); clawServoPos.innerHTML = clawServoSlider.value;");
+
                         client.println("        baseStepperSlider.oninput = function () { baseStepperSlider.value = this.value; baseStepperPos.innerHTML = this.value; }");
                         client.println("        shoulderServoSlider.oninput = function () { shoulderServoSlider.value = this.value; shoulderServoPos.innerHTML = this.value; }");
+                        client.println("        elbowServoSlider.oninput = function () { elbowServoSlider.value = this.value; elbowServoPos.innerHTML = this.value; }");
+                        client.println("        wristPitchServoSlider.oninput = function () { wristPitchServoSlider.value = this.value; wristPitchServoPos.innerHTML = this.value; }");
+                        client.println("        clawServoSlider.oninput = function () { clawServoSlider.value = this.value; clawServoPos.innerHTML = this.value; }");
+                        
                         client.println("        $.ajaxSetup({ timeout: 1000 }); ");
-                        client.println("        function move(baseStepperPos, shoulderServoPos) {");
-                        client.println("            $.get(\"/?baseStepperValue=\" + baseStepperPos + \"&shoulderServoValue=\" + shoulderServoPos + \"&\");");
-                        //client.println("            $.get(\"/?shoulderServoValue=\" + shoulderServoPos + \"&\");  ");
+                        client.println("        function move(baseStepperPos, shoulderServoPos, elbowServoPos, wristPitchServoPos, clawServoPos) {");
+                        //client.println("            $.get(\"/?baseStepperValue=\" + baseStepperPos + \"&shoulderServoValue=\" + shoulderServoPos + \"&elbowServoValue=\" + elbowServoPos + \"&\");");
+                        client.println("            $.get(\"/?baseStepperValue=\" + baseStepperPos + \"&shoulderServoValue=\" + shoulderServoPos + \"&elbowServoValue=\" + elbowServoPos + \"&wristPitchServoValue=\" + wristPitchServoPos + \"&clawServoValue=\" + clawServoPos + \"&\");");
                         client.println("            { Connection: close };");
                         client.println("        }");
                         client.println("        </script>");
@@ -229,16 +257,61 @@ void listen_for_clients() {
                             // String with motor position
                             valueString = header.substring(pos1 + 1, pos2);
 
-                            shoulderServoAngle = valueString.toInt();
+                            shoulderServoAngle = map_to_normal(valueString.toInt(), 0, 270, 180);
                             angles.push_back(shoulderServoAngle);
 
                             Serial.println("Shoulder angle: " + String(shoulderServoAngle));       
-                        }   
+                        }
+
+                        // GET data
+                        if(header.indexOf("elbowServoValue=") >= 0) {
+                            pos1 = header.indexOf('elbowServoValue=', pos1 + 1);
+                            pos2 = header.indexOf('&', pos2 + 1);
+
+                            // String with motor position
+                            valueString = header.substring(pos1 + 1, pos2);
+
+                            elbowServoAngle = map_to_normal(valueString.toInt(), 0, 270, 180);
+                            
+                            angles.push_back(elbowServoAngle);
+
+                            Serial.println("Elbow angle: " + String(elbowServoAngle));       
+                        }
+
+                        // GET data
+                        if(header.indexOf("wristPitchServoValue=") >= 0) {
+                            pos1 = header.indexOf('wristPitchServoValue=', pos1 + 1);
+                            pos2 = header.indexOf('&', pos2 + 1);
+
+                            // String with motor position
+                            valueString = header.substring(pos1 + 1, pos2);
+
+                            wristPitchServoAngle = map_to_normal(valueString.toInt(), 0, 180, 180);
+                            
+                            angles.push_back(wristPitchServoAngle);
+
+                            Serial.println("Wrist pitch angle: " + String(wristPitchServoAngle));       
+                        }
+
+                        // GET data
+                        if(header.indexOf("clawServoValue=") >= 0) {
+                            pos1 = header.indexOf('clawServoValue=', pos1 + 1);
+                            pos2 = header.indexOf('&', pos2 + 1);
+
+                            // String with motor position
+                            valueString = header.substring(pos1 + 1, pos2);
+
+                            clawServoAngle = map_to_normal(valueString.toInt(), 0, 50, 50);
+                            
+                            angles.push_back(clawServoAngle);
+
+                            Serial.println("Claw: " + String(clawServoAngle));       
+                        }    
 
                         if (angles.size() > 0) {
                             // Move robot arm
                             Serial.println("Angles size: " + String(angles.size()));
-                            motorcontroller.move_motors(angles);
+                            motorcontroller.move_motors_smooth(angles);
                             angles.clear();
                         }
 
