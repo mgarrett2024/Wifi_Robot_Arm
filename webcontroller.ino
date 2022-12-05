@@ -1,17 +1,3 @@
-/*
-  ESP32 Remote WiFi Servo Control
-  esp32-web-servo.ino
-  Control servo motor from web page
-
-  Based upon example from Rui Santos
-  Random Nerd Tutorials
-  https://randomnerdtutorials.com/esp32-servo-motor-web-server-arduino-ide/
-
-
-  DroneBot Workshop 2020
-  https://dronebotworkshop.com
-*/
-
 #include <WiFi.h>
 #include <ESP32Servo.h>
 #include <list>
@@ -21,8 +7,8 @@
     Web Server Variables
 */
 // Network credentials
-const char *ssid = "Garrett";
-const char *password = "3042872824";
+const char *ssid = "FTNT-Student";
+const char *password = "Goeagles";
 
 // Web server on port 80 (http)
 WiFiServer server(80);
