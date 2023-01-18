@@ -3,7 +3,8 @@
 ## Background
 Robot arms have always interested me and before my class I had been wanting to learn embedded systems to create my own projects. I would watch Youtube videos
 about custom LED light set ups and home automation projects people had done. I decided to try to create my own robot arm for my final project after seeing 
-a couple videos on Youtube. I decided on just simple stepper and servo motors for this project because I had a deadline to meet.
+a couple videos on Youtube. I decided on just simple stepper and servo motors for this project because I had a deadline to meet. I hope to create a better arm in
+the future that utilizes some type of gearbox like a cycloidal or harmonic drive and uses all stepper or dc motors.
 
 ## About the arm
 It uses 1 Nema 17 stepper motor for the base and 4 servo motors for the other joints. In order to allow the base to move in 360 degrees, all components are
