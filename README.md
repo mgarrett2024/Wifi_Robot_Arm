@@ -13,3 +13,8 @@ to 8.4v and 5v to control both the servos and ESP32. The motors are controlled b
 a series of sliders and a send button. The angles are then given to each respective motor and the motors move to those angles. The servo motors move fairly quickly
 so I slowed them down by smoothly interpolating between the angle they are currently at and their target angle. They start slow and build up speed and then slow
 down again as they near their target position.
+
+## Renders of Arm
+![Full Robot Arm](https://github.com/mgarrett2024/Wifi_Robot_Arm/blob/master/Robot_Base_Full.jpg)
+
+![Base Robot Arm](https://github.com/mgarrett2024/Wifi_Robot_Arm/blob/master/Robot_Base_Bottom.jpg)
