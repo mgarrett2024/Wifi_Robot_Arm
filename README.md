@@ -28,20 +28,24 @@ then are given the angles and they move to that position.
 ## Problems I Faced
 
 ### Motors moving too quickly and causing arm to be thrown around
-> I fixed this problem by smoothing the motion of the arms over a sigmoid function so the motors ease into starting and stopping.
+I fixed this problem by smoothing the motion of the arms over a sigmoid function so the motors ease into starting and stopping.
+
 
 
 ### Servo motors wouldn't move even though they were set up correctly
-> I used an ESP32 Servo library for moving the motors and when moving the motors from the motorcontroller they wouldn't move even though they should've. I fixed
-> this problem by "reattaching", as the library called it, the motors everytime they were given a new command
+I used an ESP32 Servo library for moving the motors and when moving the motors from the motorcontroller they wouldn't move even though they should've. I fixed
+this problem by "reattaching", as the library called it, the motors everytime they were given a new command
+
 
 
 ### Base stepper motor is not stronng enough to move arm when extended
-> I haven't fixed this yet but I would either get a stronger stepper motor or use a type off gearbox in the base to increase torque
+I haven't fixed this yet but I would either get a stronger stepper motor or use a type off gearbox in the base to increase torque
+
 
 
 ## Things I would change in the future
 I would use all stepper motors in the future with some sort of gearbox, such as a cycloidal or harmonic drive, instead of servo motors. 
+
 
 
 # Renders of Arm
